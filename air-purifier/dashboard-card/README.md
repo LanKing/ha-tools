@@ -26,9 +26,9 @@ But if it saves someone a couple of hours of life — then it was worth it.**
 ### 1. Install required modules
 All modules are installed via [HACS](#what-is-hacs). [Install HACS first](#what-is-hacs) if you don’t have it yet. This is basically a foundation for Home Assistant and you’ll almost certainly need it many more times.
 Below are the modules you need to install by finding them one by one in the HACS search bar, selecting each, and clicking the download button:
-- Xiaomi Miot — for local connection of Xiaomi devices;
-- card-mod — to enable styling of stock cards;
-- Decluttering card — a templating tool to avoid duplicating the entire card code when using multiple devices.
+- ```Xiaomi Miot``` — for local connection of Xiaomi devices;
+- ```card-mod``` — to enable styling of stock cards;
+- ```Decluttering card``` — a templating tool to avoid duplicating the entire card code when using multiple devices.
 
 ### 2. Connect Xiaomi devices via LAN
 > Please skip this step if you have already configured your device via LAN. If not — it’s worth reading.
