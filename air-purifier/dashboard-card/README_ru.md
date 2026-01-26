@@ -1,4 +1,4 @@
-[Switch to English version](readme.md)
+[Switch to English version](README.md)
 
 # 🌫️ Xiaomi Air Purifier в Home Assistant (LAN)
 
@@ -124,15 +124,14 @@ decluttering_templates:
 
 <a id="what-is-hacs"></a>
 ## 🛍 Приложение 1 — Что такое HACS?
-## 🛍 Appendix 1 — What is HACS?
 
-HACS (Home Assistant Community Store) is a community-driven extension system for Home Assistant.
-It allows you to install third-party blueprints, integrations, dashboards, and custom components directly from GitHub — with update notifications and version management.
+HACS (Home Assistant Community Store) — это управляемая сообществом система расширений для Home Assistant.
+Она позволяет устанавливать сторонние блюпринты, интеграции, дашборды и кастомные компоненты напрямую с GitHub — с уведомлениями об обновлениях и управлением версиями.
 
-### How to install HACS
+### Как установить HACS
 
-> During the first-time setup, HACS will ask you to sign in to GitHub and authorize access.  
-> You need a GitHub account for this (create one if needed: [https://github.com/signup](https://github.com/signup)).  
-> 🧘‍♂️ The authorization is read-only — HACS can only download public repositories and cannot modify your GitHub account or data.  
+> При первичной настройке HACS попросит войти в GitHub и авторизовать доступ.  
+> Для этого нужен аккаунт GitHub (если его нет — создайте: https://github.com/signup).  
+> 🧘‍♂️ Авторизация только на чтение — HACS может загружать публичные репозитории и не имеет доступа к изменению вашего аккаунта или данных GitHub.
 
-👉 [Follow the official HACS setup instruction](https://hacs.xyz/docs/use/#getting-started-with-hacs)
+👉 [Официальная инструкция по установке HACS](https://hacs.xyz/docs/use/#getting-started-with-hacs)
