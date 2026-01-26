@@ -52,6 +52,7 @@ On the dashboard you want, click the top-right ⋮ → Edit dashboard → ⋮ �
 #### 3.1. Adding the template
 Add the following code (recommended at the very bottom):
 
+```yaml
 decluttering_templates:
   xiaomi_air_cleaner_tile:
     default:
@@ -102,10 +103,12 @@ decluttering_templates:
             color: var(--badge-color);
             pointer-events: none;
           }
+```
 
 #### 3.2 Adding a card
 There are two options: you can edit the card in the same Raw Configuration Editor, or directly on the dashboard by switching to YAML (code) mode:
 
+```yaml
 - type: custom:decluttering-card
   template: xiaomi_air_cleaner_tile
   variables:
@@ -113,6 +116,7 @@ There are two options: you can edit the card in the same Raw Configuration Edito
     - entity_pm25: sensor.xiaomi_cpa4_9c14_pm25_density
     - entity_filter: sensor.xiaomi_cpa4_9c14_filter_left_time
     - entity_fan: fan.xiaomi_cpa4_9c14_air_purifier
+```
 
 - name — optional; if omitted, the card will be named “Air”
 - the remaining fields are mandatory; you must specify the corresponding sensors of your device for each card. You can create as many such cards as you like.
