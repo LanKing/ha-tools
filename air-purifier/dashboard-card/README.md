@@ -1,4 +1,4 @@
-[Русская версия](README_ru.md)
+[Версия на русском](README_ru.md)
 
 # 🌫️ Xiaomi Air Purifier in Home Assistant (LAN)
 
