@@ -83,13 +83,18 @@ decluttering_templates:
             {% else %}
               --badge-text: "";
             {% endif %}
-            {% set v = states('[[entity_pm25]]')|float(0) %}
-            {% if v < 12 %}
-              --tile-color: #2ecc71 !important;
-            {% elif v < 35 %}
-              --tile-color: #f39c12 !important;
+            {% set fan = states('[[entity_fan]]') %}
+            {% if fan in ['off','unavailable','unknown'] %}
+              --tile-color: #9e9e9e !important;
             {% else %}
-              --tile-color: #e74c3c !important;
+              {% set v = states('[[entity_pm25]]')|float(0) %}
+              {% if v < 12 %}
+                --tile-color: #2ecc71 !important;
+              {% elif v < 35 %}
+                --tile-color: #f39c12 !important;
+              {% else %}
+                --tile-color: #e74c3c !important;
+              {% endif %}
             {% endif %}
           }
                  
