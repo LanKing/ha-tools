@@ -1,0 +1,139 @@
+name: Restructure HACS translations
+
+on:
+  push:
+    branches:
+      - agent/hacs-readme-translations
+    paths:
+      - .github/workflows/restructure-hacs-langs.yml
+
+permissions:
+  contents: write
+
+jobs:
+  restructure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/hacs-readme-translations
+          fetch-depth: 0
+
+      - name: Move translations and rebuild language navigation
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          directory = Path('appendix-what-is-hacs')
+          root_readme = directory / 'README.md'
+          langs = directory / 'langs'
+          langs.mkdir(exist_ok=True)
+
+          delimiter = '\n\n<hr>\n\n'
+          root_content = root_readme.read_text(encoding='utf-8')
+          if delimiter not in root_content:
+              raise RuntimeError('Could not locate README navigation delimiter')
+
+          current_switch, root_body = root_content.split(delimiter, 1)
+          pattern = re.compile(
+              r'<sub>(.*?)&nbsp;<a href="README_([^"/]+)\.md">(.*?)</a>(?:&nbsp;\|)?</sub>'
+          )
+          translations = []
+          for match in pattern.finditer(current_switch):
+              prefix, code, native_name = match.groups()
+              translations.append((code, prefix, native_name))
+
+          if len(translations) != 61:
+              raise RuntimeError(f'Expected 61 translations, found {len(translations)}')
+
+          codes = [code for code, _, _ in translations]
+          if len(codes) != len(set(codes)):
+              raise RuntimeError('Duplicate language codes in selector')
+          if {'en-GB', 'es-419'} & set(codes):
+              raise RuntimeError('Redundant regional variants are still present')
+
+          translation_files = sorted(directory.glob('README_*.md'))
+          if len(translation_files) != 61:
+              raise RuntimeError(f'Expected 61 translated files, found {len(translation_files)}')
+
+          for source in translation_files:
+              target = langs / source.name
+              if target.exists():
+                  raise RuntimeError(f'Target already exists: {target}')
+              source.rename(target)
+
+          english = ('en', '🇺🇸', 'E&#8288;n&#8288;g&#8288;l&#8288;i&#8288;s&#8288;h')
+
+          def render_item(prefix: str, name: str, href: str, pipe: bool) -> str:
+              suffix = '&nbsp;|' if pipe else ''
+              return f'<sub>{prefix}&nbsp;<a href="{href}">{name}</a>{suffix}</sub>'
+
+          def render_switch(current_code: str) -> str:
+              entries = []
+              if current_code != 'en':
+                  entries.append((english[1], english[2], '../README.md'))
+
+              for code, prefix, name in translations:
+                  if code == current_code:
+                      continue
+                  href = f'langs/README_{code}.md' if current_code == 'en' else f'README_{code}.md'
+                  entries.append((prefix, name, href))
+
+              return ' '.join(
+                  render_item(prefix, name, href, index < len(entries) - 1)
+                  for index, (prefix, name, href) in enumerate(entries)
+              )
+
+          root_readme.write_text(
+              render_switch('en') + delimiter + root_body,
+              encoding='utf-8',
+          )
+
+          for code, _, _ in translations:
+              path = langs / f'README_{code}.md'
+              if not path.exists():
+                  raise RuntimeError(f'Missing translated README: {path}')
+              content = path.read_text(encoding='utf-8')
+              if delimiter not in content:
+                  raise RuntimeError(f'Could not locate delimiter in {path}')
+              _, body = content.split(delimiter, 1)
+              path.write_text(render_switch(code) + delimiter + body, encoding='utf-8')
+
+          # Validate structure and every reciprocal link.
+          if list(directory.glob('README_*.md')):
+              raise RuntimeError('Translated README files remain outside langs/')
+          moved = sorted(langs.glob('README_*.md'))
+          if len(moved) != 61:
+              raise RuntimeError(f'Expected 61 files in langs/, found {len(moved)}')
+
+          all_files = [root_readme, *moved]
+          for path in all_files:
+              text = path.read_text(encoding='utf-8')
+              if '<br>' in text or '<nobr>' in text:
+                  raise RuntimeError(f'Obsolete wrapping markup remains in {path}')
+              if 'README_en-GB.md' in text or 'README_es-419.md' in text:
+                  raise RuntimeError(f'Redundant locale reference remains in {path}')
+
+              switch = text.split(delimiter, 1)[0]
+              hrefs = re.findall(r'<a href="([^"]+)">', switch)
+              if len(hrefs) != 61:
+                  raise RuntimeError(f'{path} has {len(hrefs)} language links, expected 61')
+              if len(hrefs) != len(set(hrefs)):
+                  raise RuntimeError(f'Duplicate language links in {path}')
+
+              for href in hrefs:
+                  target = (path.parent / href).resolve()
+                  if not target.exists():
+                      raise RuntimeError(f'Broken link in {path}: {href}')
+
+          workflow = Path('.github/workflows/restructure-hacs-langs.yml')
+          workflow.unlink()
+          PY
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Move HACS translations into langs directory"
+          git push
