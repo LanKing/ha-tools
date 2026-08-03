@@ -1,0 +1,142 @@
+name: Normalize HACS language switch
+
+on:
+  push:
+    branches:
+      - agent/hacs-readme-translations
+    paths:
+      - .github/workflows/update-hacs-language-switch.yml
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/hacs-readme-translations
+          fetch-depth: 0
+
+      - name: Update README language switches
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          directory = Path('appendix-what-is-hacs')
+          languages = [
+              ('en', '🇺🇸', 'English', 'README.md'),
+              ('uk', '🇺🇦', 'Українська', 'README_uk.md'),
+              ('ru', '<sub>ru</sub>', 'Русский', 'README_ru.md'),
+              ('af', '🇿🇦', 'Afrikaans', 'README_af.md'),
+              ('ar', '🇸🇦', 'العربية', 'README_ar.md'),
+              ('bg', '🇧🇬', 'Български', 'README_bg.md'),
+              ('bn', '🇧🇩', 'বাংলা', 'README_bn.md'),
+              ('bs', '🇧🇦', 'Bosanski', 'README_bs.md'),
+              ('ca', '<sub>ca</sub>', 'Català', 'README_ca.md'),
+              ('cs', '🇨🇿', 'Čeština', 'README_cs.md'),
+              ('cy', '<sub>cy</sub>', 'Cymraeg', 'README_cy.md'),
+              ('da', '🇩🇰', 'Dansk', 'README_da.md'),
+              ('de', '🇩🇪', 'Deutsch', 'README_de.md'),
+              ('el', '🇬🇷', 'Ελληνικά', 'README_el.md'),
+              ('eo', '<sub>eo</sub>', 'Esperanto', 'README_eo.md'),
+              ('es', '🇪🇸', 'Español', 'README_es.md'),
+              ('et', '🇪🇪', 'Eesti', 'README_et.md'),
+              ('eu', '<sub>eu</sub>', 'Euskara', 'README_eu.md'),
+              ('fa', '🇮🇷', 'فارسی', 'README_fa.md'),
+              ('fi', '🇫🇮', 'Suomi', 'README_fi.md'),
+              ('fy', '<sub>fy</sub>', 'Frysk', 'README_fy.md'),
+              ('fr', '🇫🇷', 'Français', 'README_fr.md'),
+              ('ga', '🇮🇪', 'Gaeilge', 'README_ga.md'),
+              ('gl', '<sub>gl</sub>', 'Galego', 'README_gl.md'),
+              ('gsw', '🇨🇭', 'Schwiizerdütsch', 'README_gsw.md'),
+              ('he', '🇮🇱', 'עברית', 'README_he.md'),
+              ('hi', '🇮🇳', 'हिन्दी', 'README_hi.md'),
+              ('hr', '🇭🇷', 'Hrvatski', 'README_hr.md'),
+              ('hu', '🇭🇺', 'Magyar', 'README_hu.md'),
+              ('hy', '🇦🇲', 'Հայերեն', 'README_hy.md'),
+              ('id', '🇮🇩', 'Indonesia', 'README_id.md'),
+              ('is', '🇮🇸', 'Íslenska', 'README_is.md'),
+              ('it', '🇮🇹', 'Italiano', 'README_it.md'),
+              ('ja', '🇯🇵', '日本語', 'README_ja.md'),
+              ('ka', '🇬🇪', 'Kartuli', 'README_ka.md'),
+              ('ko', '🇰🇷', '한국어', 'README_ko.md'),
+              ('lb', '🇱🇺', 'Lëtzebuergesch', 'README_lb.md'),
+              ('lt', '🇱🇹', 'Lietuvių', 'README_lt.md'),
+              ('lv', '🇱🇻', 'Latviešu', 'README_lv.md'),
+              ('mk', '🇲🇰', 'Македонски', 'README_mk.md'),
+              ('ml', '🇮🇳', 'മലയാളം', 'README_ml.md'),
+              ('nb', '🇳🇴', 'Norsk Bokmål', 'README_nb.md'),
+              ('nl', '🇳🇱', 'Nederlands', 'README_nl.md'),
+              ('nn', '🇳🇴', 'Norsk Nynorsk', 'README_nn.md'),
+              ('pl', '🇵🇱', 'Polski', 'README_pl.md'),
+              ('pt', '🇵🇹', 'Português', 'README_pt.md'),
+              ('pt-BR', '🇧🇷', 'Português (BR)', 'README_pt-BR.md'),
+              ('ro', '🇷🇴', 'Română', 'README_ro.md'),
+              ('sk', '🇸🇰', 'Slovenčina', 'README_sk.md'),
+              ('sl', '🇸🇮', 'Slovenščina', 'README_sl.md'),
+              ('sq', '🇦🇱', 'Shqip', 'README_sq.md'),
+              ('sr', '🇷🇸', 'Српски', 'README_sr.md'),
+              ('sr-Latn', '🇷🇸', 'Srpski', 'README_sr-Latn.md'),
+              ('sv', '🇸🇪', 'Svenska', 'README_sv.md'),
+              ('ta', '🇮🇳', 'தமிழ்', 'README_ta.md'),
+              ('te', '🇮🇳', 'తెలుగు', 'README_te.md'),
+              ('th', '🇹🇭', 'ภาษาไทย', 'README_th.md'),
+              ('tr', '🇹🇷', 'Türkçe', 'README_tr.md'),
+              ('ur', '🇵🇰', 'اُردُو', 'README_ur.md'),
+              ('vi', '🇻🇳', 'Tiếng Việt', 'README_vi.md'),
+              ('zh-Hans', '🇨🇳', '简体中文', 'README_zh-Hans.md'),
+              ('zh-Hant', '🇹🇼', '繁體中文', 'README_zh-Hant.md'),
+          ]
+
+          for obsolete in ('README_en-GB.md', 'README_es-419.md'):
+              (directory / obsolete).unlink(missing_ok=True)
+
+          files = {filename: code for code, _, _, filename in languages}
+          for filename, current_code in files.items():
+              path = directory / filename
+              text = path.read_text(encoding='utf-8')
+              switch = ' | '.join(
+                  f'{marker} [{name}]({target})'
+                  for code, marker, name, target in languages
+                  if code != current_code
+              )
+              updated, count = re.subn(
+                  r'\A.*?\n\n<hr>\n\n',
+                  switch + '\n\n<hr>\n\n',
+                  text,
+                  count=1,
+                  flags=re.S,
+              )
+              if count != 1:
+                  raise RuntimeError(f'Could not replace switch in {path}')
+              path.write_text(updated, encoding='utf-8')
+
+          readmes = sorted(directory.glob('README*.md'))
+          if len(readmes) != len(languages):
+              raise RuntimeError(f'Expected {len(languages)} README files, got {len(readmes)}')
+
+          expected_targets = {filename for _, _, _, filename in languages}
+          for path in readmes:
+              text = path.read_text(encoding='utf-8')
+              switch = text.split('\n\n<hr>\n\n', 1)[0]
+              if '<br>' in switch or '\n' in switch:
+                  raise RuntimeError(f'Non-continuous switch in {path}')
+              if 'README_en-GB.md' in switch or 'README_es-419.md' in switch:
+                  raise RuntimeError(f'Obsolete locale link in {path}')
+              links = set(re.findall(r'\((README(?:_[^)]+)?\.md)\)', switch))
+              expected = expected_targets - {path.name}
+              if links != expected:
+                  raise RuntimeError(f'Broken switch in {path}: {len(links)} links')
+
+          Path('.github/workflows/update-hacs-language-switch.yml').unlink()
+          PY
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add appendix-what-is-hacs .github/workflows/update-hacs-language-switch.yml
+          git commit -m 'Normalize HACS language switch [skip ci]'
+          git push origin HEAD:agent/hacs-readme-translations
