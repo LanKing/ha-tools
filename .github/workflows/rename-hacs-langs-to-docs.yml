@@ -1,0 +1,57 @@
+name: Rename HACS language directory
+
+on:
+  push:
+    branches:
+      - agent/rename-langs-to-docs
+    paths:
+      - .github/workflows/rename-hacs-langs-to-docs.yml
+
+permissions:
+  contents: write
+
+jobs:
+  rename:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/rename-langs-to-docs
+          fetch-depth: 0
+
+      - name: Rename directory and update links
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          base="appendix-what-is-hacs"
+          test -d "$base/langs"
+          test ! -e "$base/docs"
+
+          mv "$base/langs" "$base/docs"
+
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("appendix-what-is-hacs/README.md")
+          text = path.read_text(encoding="utf-8")
+          old = 'href="langs/'
+          new = 'href="docs/'
+          if old not in text:
+              raise SystemExit("No langs links found in root README")
+          text = text.replace(old, new)
+          if 'href="langs/' in text:
+              raise SystemExit("Some langs links remain")
+          path.write_text(text, encoding="utf-8")
+          PY
+
+          test "$(find "$base/docs" -maxdepth 1 -type f -name 'README_*.md' | wc -l)" -eq 61
+          test ! -e "$base/langs"
+          ! grep -R 'href="langs/' "$base"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/rename-hacs-langs-to-docs.yml
+          git add -A
+          git commit -m "Rename HACS language directory to docs"
+          git push
