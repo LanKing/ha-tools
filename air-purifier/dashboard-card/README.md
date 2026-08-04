@@ -127,6 +127,10 @@ There are two options: you can edit the card in the same Raw Configuration Edito
 - name — optional; if omitted, the card will be named “Air”
 - the remaining fields are mandatory; you must specify the corresponding sensors of your device for each card. You can create as many such cards as you like.
 
+<a id="moar"></a>
+## 🏠 More cool stuff
+[Explore my other Home Assistant tools](https://github.com/LanKing/ha-tools/blob/main/README.md)
+
 <a id="what-is-hacs"></a>
 ## 🛍 Appendix 1 — What is HACS?
 
