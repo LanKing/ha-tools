@@ -24,7 +24,7 @@ But if it saves someone a couple of hours of life — then it was worth it.**
 > I didn’t turn this code into a package because, in my opinion, Lovelace package distribution in Home Assistant is not better than simple manual copying. So the text you’re reading is an article, not an installation manual. Don’t worry though — everything is very simple. If you don’t have a Xiaomi device, skip the Xiaomi-related parts.
 
 ### 1. Install required modules
-All modules are installed via [HACS](#what-is-hacs). [Install HACS first](#what-is-hacs) if you don’t have it yet. This is basically a foundation for Home Assistant and you’ll almost certainly need it many more times.
+All modules are installed via HACS. [Install HACS first](https://github.com/LanKing/ha-tools/blob/main/appendix-what-is-hacs/README.md) if you don’t have it yet. This is basically a foundation for Home Assistant and you’ll almost certainly need it many more times.
 Below are the modules you need to install by finding them one by one in the HACS search bar, selecting each, and clicking the download button:
 - ```Xiaomi Miot``` — for local connection of Xiaomi devices;
 - ```card-mod``` — to enable styling of stock cards;
@@ -130,17 +130,3 @@ There are two options: you can edit the card in the same Raw Configuration Edito
 <a id="moar"></a>
 ## 🏠 More cool stuff
 [Explore my other Home Assistant tools](https://github.com/LanKing/ha-tools/blob/main/README.md)
-
-<a id="what-is-hacs"></a>
-## 🛍 Appendix 1 — What is HACS?
-
-HACS (Home Assistant Community Store) is a community-driven extension system for Home Assistant.
-It allows you to install third-party blueprints, integrations, dashboards, and custom components directly from GitHub — with update notifications and version management.
-
-### How to install HACS
-
-> During the first-time setup, HACS will ask you to sign in to GitHub and authorize access.  
-> You need a GitHub account for this (create one if needed: [https://github.com/signup](https://github.com/signup)).  
-> 🧘‍♂️ The authorization is read-only — HACS can only download public repositories and cannot modify your GitHub account or data.  
-
-👉 [Follow the official HACS setup instruction](https://hacs.xyz/docs/use/#getting-started-with-hacs)
